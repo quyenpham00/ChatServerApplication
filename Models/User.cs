@@ -18,6 +18,6 @@ namespace ChatServerApplication.Models
         public string HashPassword { get; set; }
         public DateTime DateOfBirth { get; set; }
         
-
+        public int hhhh { get; set; }
     }
 }
