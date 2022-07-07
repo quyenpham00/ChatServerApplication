@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace ChatServerApplication.Models
 {
-
     public class User
     {
         public int Id { get; set; }
@@ -14,10 +13,10 @@ namespace ChatServerApplication.Models
         public string FirstName { get; set; }
         public string FullName
         {
-            get { return LastName + FirstName; }
+            get => (LastName + "" + FirstName);
         }
         public string HashPassword { get; set; }
-        public DateTime DateOfBirth { get; set; }
         public Gender Gender { get; set; }
+        public DateTime DateOfBirth { get; set; }
     }
 }
