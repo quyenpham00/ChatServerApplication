@@ -13,7 +13,7 @@ namespace ChatServerApplication.Models
         public string FirstName { get; set; }
         public string FullName
         {
-            get => (LastName + "" + FirstName);
+            get => (LastName + " " + FirstName);
         }
         public string HashPassword { get; set; }
         public Gender Gender { get; set; }
