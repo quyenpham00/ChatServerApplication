@@ -22,6 +22,7 @@ namespace ChatServerApplication.Data
             {
                 storage = new DataStorage();
             }
+
             return storage;
         }
     }

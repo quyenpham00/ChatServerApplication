@@ -9,6 +9,5 @@ namespace ChatServerApplication.Models
     public class PrivateGroup : Group
     {
         public User Admins { get; set; }
-        public List<User> Members { get; set; }
     }
 }
