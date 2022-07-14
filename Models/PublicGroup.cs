@@ -8,6 +8,6 @@ namespace ChatServerApplication.Models
 {
     public class PublicGroup : Group
     {
-
+        public string AccessCode { get; set; }
     }
 }
