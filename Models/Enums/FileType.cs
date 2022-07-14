@@ -10,6 +10,7 @@ namespace ChatServerApplication.Models.Enums
     {
         Image,
         Video,
-        Audio
+        Audio,
+        File
     }
 }
