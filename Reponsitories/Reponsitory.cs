@@ -26,7 +26,6 @@ namespace ChatServerApplication.Reponsitories
                 query = query.Where(filter);
             }
 
-
             if (orderBy != null)
             {
                 return orderBy(query).ToList();
