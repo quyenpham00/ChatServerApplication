@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ChatServerApplication.Models;
+using ChatServerApplication.Reponsitories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +10,10 @@ namespace ChatServerApplication.Services
 {
     public class UserService
     {
-        public void Login()
+        Repository<User> users = new Repository<User>();
+        public void Login(String username, String password)
         {
-
+            
 
         }
     }

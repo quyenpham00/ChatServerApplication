@@ -1,2 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+using ChatServerApplication.Uilities;
+
+PasswordEncoder passwordEncoder = new PasswordEncoder();
+Console.WriteLine(passwordEncoder.CheckPasswordInvalid("123"));
