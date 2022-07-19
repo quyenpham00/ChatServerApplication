@@ -20,5 +20,6 @@ namespace ChatServerApplication.Models
         public Gender Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
         public ICollection<User> Friends { get; set; }
+        public ICollection<FriendInvitation> FriendInvitation { get; set; }
     }
 }
