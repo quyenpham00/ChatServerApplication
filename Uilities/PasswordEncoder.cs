@@ -24,7 +24,7 @@ namespace ChatServerApplication.Uilities
             }
         }
 
-        public Boolean CheckPasswordInvalid(String password)
+        public Boolean CheckPasswordValid(String password)
         {
             try
             {

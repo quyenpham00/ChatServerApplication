@@ -2,4 +2,4 @@
 using ChatServerApplication.Uilities;
 
 PasswordEncoder passwordEncoder = new PasswordEncoder();
-Console.WriteLine(passwordEncoder.CheckPasswordInvalid("123"));
+Console.WriteLine(passwordEncoder.CheckPasswordValid("123"));

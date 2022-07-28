@@ -1,4 +1,5 @@
-﻿using ChatServerApplication.Models;
+﻿using ChatServerApplication.Activities;
+using ChatServerApplication.Models;
 using ChatServerApplication.Reponsitories;
 using System;
 using System.Collections.Generic;
@@ -8,13 +9,19 @@ using System.Threading.Tasks;
 
 namespace ChatServerApplication.Data
 {
-    internal class DataStorage
+    public class DataStorage
     {
         public Repository<User> Users { get; }
-        private DataStorage Storage { get; set; }
-        private DataStorage()
+        public Repository<Group> Groups { get; }
+        public Repository<Message> Messages { get; }
+        public Repository<Request> Requests { get; }
+        public DataStorage Storage { get; set; }
+        public DataStorage()
         {
             Users = new Repository<User>();
+            Groups = new Repository<Group>();
+            Messages = new Repository<Message>();
+            Requests = new Repository<Request>();
         }
         public DataStorage GetDataStorage()
         {

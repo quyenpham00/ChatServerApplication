@@ -7,10 +7,20 @@ using System.Threading.Tasks;
 
 namespace ChatServerApplication.Models
 {
-    internal class File
+    public class File
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public FileType FileType { get; set; }
+        public Guid Id { get; set; }
+        public String Name { get; set; }
+        public Guid FolderId { get; set; }
+        public FileType Type { get; set; }
+        public DateTime Created { get; set; }
+        public File(String name, Guid folderId, FileType fileType)
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            FolderId = folderId;
+            Type = fileType;
+            Created = DateTime.Now;
+        }
     }
 }

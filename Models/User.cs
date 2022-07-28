@@ -8,7 +8,7 @@ namespace ChatServerApplication.Models
 {
     public class User
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Username { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
@@ -19,6 +19,17 @@ namespace ChatServerApplication.Models
         public string HashPassword { get; set; }
         public Gender Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public ICollection<User> Friends { get; set; }
+        public List<User> Friends { get; set; }
+       public User(string username, string lastName, string firstName, string hashPassword, Gender gender, DateTime dateOfBirth)
+        {
+            Id = Guid.NewGuid();
+            Username = username;
+            LastName = lastName;
+            FirstName = firstName;
+            HashPassword = hashPassword;
+            Gender = gender;
+            DateOfBirth = dateOfBirth;
+            Friends = new List<User>();           
+        }
     }
 }

@@ -8,7 +8,11 @@ namespace ChatServerApplication.Models
 {
     public class PrivateGroup : Group
     {
-        public User Admin { get; set; }
-        public string AccessCode { get; set; }
+        public List<User> Admins { get; set; }
+        public PrivateGroup(String name, User admin) : base(name)
+        {
+            Admins = new List<User>();
+            Admins.Add(admin);
+        }
     }
 }

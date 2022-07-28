@@ -8,8 +8,17 @@ namespace ChatServerApplication.Models
 {
     public class Group
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public Guid Id { get; set; }
+        public String Name { get; set; }
         public List<User> Members { get; set; }
+        public DateTime Created { get; set; }
+        public List <Message> Messages { get; set; }
+        public Group(String name = "")
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            Members = new List<User>();
+            Created = DateTime.Now;
+        }
     }
 }
