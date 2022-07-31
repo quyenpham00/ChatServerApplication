@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace ChatServerApplication.Models.Enums
 {
-    public enum MessageStatus
+    public enum AttachmentType
     {
-        Sent,
-        Deleted
+        Image,
+        Video,
+        Audio,
+        File
     }
 }

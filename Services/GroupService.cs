@@ -1,4 +1,5 @@
-﻿using ChatServerApplication.Models;
+﻿using ChatServerApplication.Data;
+using ChatServerApplication.Models;
 using ChatServerApplication.Reponsitories;
 using ChatServerApplication.Uilities;
 using System;
@@ -11,73 +12,74 @@ namespace ChatServerApplication.Services
 {
     public class GroupService
     {
-        Repository<Group> groups = new Repository<Group>();
-
-        public Group FindGroupByID(Guid groupID)
+        DataStorage dataStorage;
+        AccessCodeGenerator accessCodeGenerator;
+        public GroupService()
         {
-            return groups.Find(x => x.Id == groupID);
+            dataStorage = DataStorage.GetDataStorage();
+            accessCodeGenerator = new AccessCodeGenerator();
         }
-        public IEnumerable<Group> FindGroupByName(String name)
+        public void CreateGroup(string groupName, string groupType, User groupAdmin)
         {
-            return groups.Get(group => group.Name.Contains(name, StringComparison.OrdinalIgnoreCase), q => q.OrderBy(s => s.Name));
-        }
-        public void CreateGroup(String groupName, string groupType, User groupAdmin)
-        {
+            Group group;
             if (groupType.Equals("Private"))
             {
-                PrivateGroup privateGroup = new PrivateGroup(groupName, groupAdmin);
-                groups.Insert(privateGroup);
+                group = new PrivateGroup(groupName, groupAdmin);
             }
             else
             {
-                AccessCodeGenerator accessCodeGenerator = new AccessCodeGenerator();
-                String accessCode = accessCodeGenerator.GetNextAccessCode();
-                PublicGroup publicGroup = new PublicGroup(groupName, accessCode);
-                groups.Insert(publicGroup);
+                string accessCode = accessCodeGenerator.GetNextAccessCode();
+                group = new PublicGroup(groupName, accessCode);
             }
+            dataStorage.Groups.Insert(group);
         }
-        public Boolean JoinGroupChatByAccessCode(Guid groupID, String accessCode, User user)
+        public bool JoinGroupChatByAccessCode(Group group, String accessCode, User user)
         {
-            Group group = FindGroupByID(groupID);
-            if (group != null)
+            if (group.GetType() == typeof(PublicGroup))
             {
-                if (group.GetType() == typeof(PublicGroup))
+                PublicGroup publicGroup = (PublicGroup)group;
+                if (accessCode.Equals(publicGroup.AccessCode))
                 {
-                    PublicGroup publicGroup = (PublicGroup)group;
-                    if (accessCode.Equals(publicGroup.AccessCode))
-                    {
-                        publicGroup.Members.Add(user);
-                        return true;
-                    }
+                    publicGroup.Members.Add(user);
+                    return true;
                 }
             }
             return false;
         }
-
-        public Boolean InviteMemberToGroupChat(Guid groupID, User invitor, User user)
+        public bool InviteMemberToGroupChat(Group group, User invitor, User member)
         {
-            Group group = FindGroupByID(groupID);
-            Boolean isGroupsMembers = !group.Members.Contains(user) && group.Members.Contains(invitor);
-            if (group != null && isGroupsMembers)
+            bool isGroupsContainMember = group.Members.Contains(member);
+            bool isGroupsContainInvitor = group.Members.Contains(invitor);
+            if (!isGroupsContainMember && isGroupsContainInvitor)
             {
                 if (group.GetType() == typeof(PublicGroup))
                 {
-                    PublicGroup publicGroup = (PublicGroup)group;
-                    publicGroup.Members.Add(user);
+                    group = (PublicGroup)group;
+                    group.Members.Add(member);
                     return true;
                 }
                 else if (group.GetType() == typeof(PrivateGroup))
                 {
                     PrivateGroup privateGroup = (PrivateGroup)group;
-                    Boolean isAdmin = privateGroup.Admins.Contains(invitor);
+                    bool isAdmin = privateGroup.Admins.Contains(invitor);
                     if (isAdmin)
                     {
-                        privateGroup.Members.Add(user);
+                        privateGroup.Members.Add(member);
                         return true;
                     }
                 }
             }
             return false;
+        }
+        public List<Attachment> FindAllFiles(Guid senderID, Guid receiverID)
+        {
+            IEnumerable<Message> groupMessagesContainingFile = dataStorage.Messages.Get(x => x.IsRelatedToGroup(senderID, receiverID) && x.Attachments.Count != 0);
+            List<Attachment> attachments = new List<Attachment>();
+            foreach (Message message in groupMessagesContainingFile)
+            {
+                attachments.AddRange(message.Attachments);
+            }
+            return attachments;
         }
     }
 }

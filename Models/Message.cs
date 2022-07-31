@@ -11,21 +11,29 @@ namespace ChatServerApplication.Models
     {
         public Guid Id { get; set; }
         public Guid SenderID { get; set; }
-        public Guid GroupID { get; set; }
-        public List<File> Files { get; set; }
-        public String Content { get; set; }
-        public MessageStatus Status { get; set; }
+        public Guid ReceiverID { get; set; }
+        public Receiver ReceiverType { get; set; }
+        public List<Attachment> Attachments { get; set; }
+        public string Content { get; set; }
         public DateTime Created { get; set; }
 
-        public Message (Guid senderID, Guid groupID, String content, List<File> files = null)
+        public Message(Guid senderID, Guid receiverID)
         {
             Id = Guid.NewGuid();
             SenderID = senderID;
-            GroupID = groupID;
-            Files = files;
-            Content = content;
-            Status = MessageStatus.Sent;
+            ReceiverID = receiverID;
+            Attachments = new List<Attachment>();
+            Content = "";
             Created = DateTime.Now;
+        }
+
+        public bool IsRelatedToGroup(Guid senderID, Guid receiverID)
+        {
+            return SenderID == senderID || ReceiverID == receiverID && ReceiverType == Receiver.Group;
+        }
+        public bool IsRelatedToUser(Guid senderID, Guid receiverID)
+        {
+            return SenderID == senderID || ReceiverID == receiverID && ReceiverType == Receiver.User;
         }
     }
 }

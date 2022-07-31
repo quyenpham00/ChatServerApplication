@@ -18,9 +18,9 @@ namespace ChatServerApplication.Models
         }
         public string HashPassword { get; set; }
         public Gender Gender { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
         public List<User> Friends { get; set; }
-       public User(string username, string lastName, string firstName, string hashPassword, Gender gender, DateTime dateOfBirth)
+        public User(string username, string lastName, string firstName, string hashPassword, Gender gender, DateOnly dateOfBirth)
         {
             Id = Guid.NewGuid();
             Username = username;
@@ -29,7 +29,7 @@ namespace ChatServerApplication.Models
             HashPassword = hashPassword;
             Gender = gender;
             DateOfBirth = dateOfBirth;
-            Friends = new List<User>();           
+            Friends = new List<User>();
         }
     }
 }

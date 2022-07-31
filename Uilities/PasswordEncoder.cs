@@ -14,7 +14,7 @@ namespace ChatServerApplication.Uilities
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password)); 
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
                 StringBuilder passwordHash = new StringBuilder();
                 for (int i = 0; i < bytes.Length; i++)
                 {
@@ -23,36 +23,19 @@ namespace ChatServerApplication.Uilities
                 return passwordHash.ToString();
             }
         }
-
-        public Boolean CheckPasswordValid(String password)
+        public bool CheckPasswordValid(String password)
         {
             try
             {
                 String pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
                 Match match = Regex.Match(password, pattern);
                 return match.Success;
-            }catch (Exception exception)
-            {
-                Console.WriteLine(exception.Message);
-                return false;
-            }
-        }
-
-        public Boolean VerifyPassword(string rawPassword, string passwordHash)
-        {
-            try
-            {
-                String hashRawPassword = HashingPassword(rawPassword);
-                if (hashRawPassword.Equals(passwordHash))
-                {
-                    return true;
-                }
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
+                return false;
             }
-            return false;
         }
     }
 }

@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChatServerApplication.Models.Enums
 {
-    public enum FileType
+    public enum Receiver
     {
-        Image,
-        Video,
-        Audio,
-        File
+        Group,
+        User,
     }
 }

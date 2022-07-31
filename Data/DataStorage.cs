@@ -15,15 +15,19 @@ namespace ChatServerApplication.Data
         public Repository<Group> Groups { get; }
         public Repository<Message> Messages { get; }
         public Repository<Request> Requests { get; }
-        public DataStorage Storage { get; set; }
-        public DataStorage()
+        public Repository<Attachment> Attachments { get; }
+        public Repository<Alias> Alias { get; }
+        private static DataStorage Storage { get; set; }
+        protected DataStorage()
         {
             Users = new Repository<User>();
             Groups = new Repository<Group>();
             Messages = new Repository<Message>();
             Requests = new Repository<Request>();
+            Attachments = new Repository<Attachment>();
+            Alias = new Repository<Alias>();
         }
-        public DataStorage GetDataStorage()
+        public static DataStorage GetDataStorage()
         {
             if (Storage == null)
             {

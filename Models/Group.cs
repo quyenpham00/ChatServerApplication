@@ -9,11 +9,10 @@ namespace ChatServerApplication.Models
     public class Group
     {
         public Guid Id { get; set; }
-        public String Name { get; set; }
+        public string Name { get; set; }
         public List<User> Members { get; set; }
         public DateTime Created { get; set; }
-        public List <Message> Messages { get; set; }
-        public Group(String name = "")
+        public Group(string name)
         {
             Id = Guid.NewGuid();
             Name = name;

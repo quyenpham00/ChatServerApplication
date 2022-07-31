@@ -1,8 +1,10 @@
 ﻿using ChatServerApplication.Activities;
 using ChatServerApplication.Data;
 using ChatServerApplication.Models;
+using ChatServerApplication.Models.Enums;
 using ChatServerApplication.Reponsitories;
 using ChatServerApplication.Uilities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,35 +15,27 @@ namespace ChatServerApplication.Services
 {
     public class UserService
     {
-        DataStorage dataStorage = new DataStorage();
-        PasswordEncoder passwordEncoder = new PasswordEncoder();
-
-        public User FindUserByID(Guid id)
+        DataStorage dataStorage;
+        PasswordEncoder passwordEncoder;
+        public UserService()
         {
-            return dataStorage.Users.Find(user => user.Id == id);
+            dataStorage = DataStorage.GetDataStorage();
+            passwordEncoder = new PasswordEncoder();
         }
-        public User FindUserByUsername(String username)
+        public bool Login(string username, string password)
         {
-            return dataStorage.Users.Find(user => user.Username.Equals(username));
-        }
-        public IEnumerable<User> FindUserByName(String name)
-        {
-            return dataStorage.Users.Get(user => user.FullName.Contains(name, StringComparison.OrdinalIgnoreCase), q => q.OrderBy(s => s.FullName));
-        }
-        public Boolean Login(String username, String password)
-        {
-            String passwordHash = passwordEncoder.HashingPassword(password);
+            string passwordHash = passwordEncoder.HashingPassword(password);
             User user = dataStorage.Users.Find(user => user.Username.Equals(username) && user.HashPassword.Equals(passwordHash));
             return user != null;
         }
 
-        public Boolean CreateUser(string username, string lastName, string firstName, string password, Gender gender, DateTime dateOfBirth)
+        public bool CreateUser(string username, string lastName, string firstName, string password, Gender gender, DateOnly dateOfBirth)
         {
-            User user = FindUserByUsername(username);
+            User user = dataStorage.Users.Find(user => user.Username.Equals(username));
             bool passwordIsValid = passwordEncoder.CheckPasswordValid(password);
             if (user == null && passwordIsValid)
             {
-                String passwordHash = passwordEncoder.HashingPassword(password);
+                string passwordHash = passwordEncoder.HashingPassword(password);
                 User newUser = new User(username, lastName, firstName, passwordHash, gender, dateOfBirth);
                 dataStorage.Users.Insert(newUser);
                 return true;
@@ -49,9 +43,8 @@ namespace ChatServerApplication.Services
             return false;
         }
 
-        public List<User> FindFriends(Guid userID, String friendName)
+        public List<User> FindFriends(User user, String friendName)
         {
-            User user = dataStorage.Users.Find(x => x.Id == userID);
             List<User> friends = user.Friends;
             List<User> friendsMatchKeyword = new List<User>();
             foreach (User friend in friends)
@@ -61,115 +54,160 @@ namespace ChatServerApplication.Services
                     friendsMatchKeyword.Add(friend);
                 }
             }
-            return friends;
+            return friendsMatchKeyword;
         }
 
-        public void SendAddFriendRequest(Guid senderID, Guid receiverID)
+        public void SendAddFriendRequest(User sender, User receiver)
         {
-            User sender = dataStorage.Users.Find(x => x.Id == senderID);
-            User receiver = dataStorage.Users.Find(x => x.Id == receiverID);
-            if (sender != null && receiver != null)
-            {
-                Request request = new Request(sender, receiver);
-            }
+            Request request = new Request(sender, receiver);
+            dataStorage.Requests.Insert(request);
         }
 
-        public Boolean AcceptAddFriendRequest(Guid userID, Guid friendID)
+        public bool AcceptAddFriendRequest(User user, User friend)
         {
-            Request friendRequest = dataStorage.Requests.Find(x => x.Sender.Equals(friendID) && x.Reveiver.Equals(userID));
+            Request friendRequest = dataStorage.Requests.Find(x => x.Sender == friend && x.Reveiver == user);
             if (friendRequest != null)
             {
-                User user = dataStorage.Users.Find(x => x.Id == userID);
-                User friend = dataStorage.Users.Find(x => x.Id == friendID);
-                if (user != null && friend != null)
-                {
-                    user.Friends.Add(friend);
-                    friend.Friends.Add(user);
-                    return true;
-                }
+                user.Friends.Add(friend);
+                friend.Friends.Add(user);
+                dataStorage.Requests.Delete(friendRequest);
+                return true;
             }
             return false;
         }
 
-        public void SendMessage(Guid senderID, Guid groupID, String content)
+        public Message CheckTypeOfReceiver(Guid senderID, Guid receiverID)
         {
-            User sender = FindUserByID(senderID);
-            if(sender != null)
+            Message message = new Message(senderID, receiverID);
+            User user = dataStorage.Users.Find(x => x.Id == receiverID);
+            if (user != null)
             {
-                Group group = dataStorage.Groups.Find(x => x.Id.Equals(groupID));
-                if(group != null)
+                Group group = dataStorage.Groups.Find(x => x.Id == receiverID);
+                if (group != null)
                 {
-                    Message message = new Message(senderID, groupID, content);
-                    group.Messages.Add(message);
-                }  
-            }   
-        }
-        public static List<User> GetAllUser()
-        {
-            List<User> users = new List<User>();
-            return users;
-        }
-        public static User GetUser(int id)
-        {
-            List<User> list = new List<User>();
-            User user = null;
-            foreach(User temp in list)
-            {
-                if (temp.Id == id)
-                {
-                    user=temp;
+                    message.ReceiverType = Receiver.Group;
                 }
             }
-            return user;
-        }
-        public static int FindFriend(string FriendUsername)
-        {
-            List<User> list = GetAllUser();
-            foreach(User user in list)
+            else
             {
-                if (user.Username.Contains(FriendUsername))
+                message.ReceiverType = Receiver.User;
+            }
+            return message;
+        }
+
+        public void SendMessage(Guid senderID, Guid receiverID, string content)
+        {
+            Message message = CheckTypeOfReceiver(senderID, receiverID);
+            message.Content = content;
+            dataStorage.Messages.Insert(message);
+        }
+
+        private void SaveFileToFolder(IFormFile file)
+        {
+            var filePath = Path.GetTempFileName();
+            using (var stream = File.Create(filePath))
+            {
+                file.CopyTo(stream);
+            }
+        }
+
+        private Attachment UploadFile(IFormFile file)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                byte[] fileBytes = memoryStream.ToArray();
+                string fileName = file.FileName;
+                Attachment attachment = new Attachment(fileName, fileBytes);
+                return attachment;
+            }
+        }
+
+        public void SendFile(Guid senderID, Guid receiverID, List<IFormFile> files)
+        {
+            List<Attachment> attachments = new List<Attachment>();
+            foreach (var file in files)
+            {
+                if (file.Length > 0)
                 {
-                    Console.WriteLine(user.Username+" "+user.Id);
+                    Attachment attachment = UploadFile(file);
+                    attachments.Add(attachment);
+                    SaveFileToFolder(file);
                 }
-                           }
-            Console.WriteLine("Choose Friend Id");
-            string id =Console.ReadLine();
-       
-            return int.Parse(id);
+            }
+            Message message = CheckTypeOfReceiver(senderID, receiverID);
+            message.Attachments = attachments;
+            dataStorage.Messages.Insert(message);
         }
-        public static string SendInvitation()
+
+        public void DeleteMessage(Message message)
         {
-            string result = "";
-            int userId = 1;
-            Console.WriteLine("Input friend user:");
-            string friendName=Console.ReadLine();
-            int friendId=FindFriend(friendName);
-            Console.WriteLine(" Say Friend Invitation:");
-            string invitation = Console.ReadLine();
-            User user=GetUser(friendId);
+            dataStorage.Messages.Delete(message);
+        }
 
-            FriendInvitation friendInvitation=new FriendInvitation()
+        public List<Message> GetTopLatestMessages(Guid senderID, Guid receiverID, int k, int m)
+        {
+            List<Message> messages = dataStorage.Messages.Get(x => x.SenderID == senderID && x.ReceiverID == receiverID).ToList();
+            List<Message> topLatestMessages = new List<Message>();
+            int start = messages.Count() - k - m;
+            int end = messages.Count() - m;
+            topLatestMessages = messages.GetRange(start, end);
+            return topLatestMessages;
+        }
+
+        public List<Message> FindMessages(Guid senderID, Guid receiverID, string keyword)
+        {
+            List<Message> messages = dataStorage.Messages.Get(x => x.SenderID == senderID && x.ReceiverID == receiverID).ToList();
+            List<Message> textMessages = messages.Where(x => x.Content != "" && x.Content.Contains(keyword, StringComparison.OrdinalIgnoreCase)).ToList();
+            return textMessages;
+        }
+
+        public List<Guid> GetGroupsOfUser(User user)
+        {
+            List<Group> groupOfUser = dataStorage.Groups.Get(x => x.Members.Contains(user)).ToList();
+            List<Guid> groupIdOfUser = new List<Guid>();
+            groupOfUser.ForEach(group => groupIdOfUser.Add(group.Id));
+            return groupIdOfUser;
+        }
+        public List<Guid> GetContactOfUser(User user)
+        {
+            List<Guid> contacts = new List<Guid>();
+            List<Message> messages = dataStorage.Messages.Get(x => x.SenderID == user.Id || x.ReceiverID == user.Id).ToList();
+            messages.ForEach(message => { contacts.Add(message.SenderID); contacts.Add(message.ReceiverID); });
+            return contacts.Distinct().ToList();
+        }
+        public List<Guid> GetConversations(User user)
+        {
+            List<Guid> groupOfUser = GetGroupsOfUser(user);
+            List<Guid> contactOfUser = GetContactOfUser(user);
+            List<Guid> conversations = new List<Guid>();
+            conversations.AddRange(groupOfUser);
+            conversations.AddRange(contactOfUser);
+            return conversations;
+        }
+
+        public bool LeaveGroup(User member, Group group)
+        {
+            bool isGroupContainUser = group.Members.Contains(member);
+            if (isGroupContainUser)
             {
-
-                UserId=userId,
-                FriendId=friendId,
-                DateTime=DateTime.Now,
-                Description=invitation,
-
-            };
-            try
-            {
-                user.FriendInvitation.Add(friendInvitation);
-                result = "Ok";
+                group.Members.Remove(member);
+                if (group.GetType() == typeof(PrivateGroup))
+                {
+                    PrivateGroup privateGroup = (PrivateGroup)group;
+                    if (privateGroup.Admins.Contains(member))
+                    {
+                        privateGroup.Admins.Remove(member);
+                    }
+                }
             }
-            catch(Exception ex)
-            {
-                result = ex.Message;
-            }
+            return isGroupContainUser;
+        }
 
-            return result;
-
+        public void SetAlias(User assignor, User assignee, string aliasName)
+        {
+            Alias alias = new Alias(aliasName, assignee, assignor);
+            dataStorage.Alias.Insert(alias);
         }
     }
 }
-

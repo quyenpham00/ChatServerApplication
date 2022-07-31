@@ -23,13 +23,6 @@ namespace ChatServerApplication.Uilities
             {
                 char[] encodeChars = encode32Chars;
 
-                buffer[12] = encodeChars[value & 31];
-                buffer[11] = encodeChars[(value >> 5) & 31];
-                buffer[10] = encodeChars[(value >> 10) & 31];
-                buffer[9] = encodeChars[(value >> 15) & 31];
-                buffer[8] = encodeChars[(value >> 20) & 31];
-                buffer[7] = encodeChars[(value >> 25) & 31];
-                buffer[6] = encodeChars[(value >> 30) & 31];
                 buffer[5] = encodeChars[(value >> 35) & 31];
                 buffer[4] = encodeChars[(value >> 40) & 31];
                 buffer[3] = encodeChars[(value >> 45) & 31];

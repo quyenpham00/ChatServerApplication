@@ -15,5 +15,4 @@ namespace ChatServerApplication.Reponsitories
             void Insert(TEntity entity);
             void Delete(TEntity entityToDelete);
         }
-    
 }
