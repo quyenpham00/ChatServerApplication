@@ -11,10 +11,9 @@ namespace ChatServerApplication.Services
     {
         bool Login(string username, string password);
         bool CreateUser(string username, string lastName, string firstName, string password, Gender gender, DateOnly dateOfBirth);
-        List<User> FindFriends(User user, String friendName);
+        List<User> FindFriends(User user, string friendName);
         void SendAddFriendRequest(User sender, User receiver);
         bool AcceptAddFriendRequest(User user, User friend);
         Message CheckTypeOfReceiver(Guid senderID, Guid receiverID);
-
     }
 }

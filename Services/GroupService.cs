@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ChatServerApplication.Services
 {
-    public class GroupService
+    public class GroupService : IGroupService
     {
         DataStorage dataStorage;
         AccessCodeGenerator accessCodeGenerator;
@@ -33,7 +33,7 @@ namespace ChatServerApplication.Services
             }
             dataStorage.Groups.Insert(group);
         }
-        public bool JoinGroupChatByAccessCode(Group group, String accessCode, User user)
+        public bool JoinGroupChatByAccessCode(Group group, string accessCode, User user)
         {
             if (group.GetType() == typeof(PublicGroup))
             {

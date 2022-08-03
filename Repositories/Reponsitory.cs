@@ -10,10 +10,12 @@ namespace ChatServerApplication.Reponsitories
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly IList<TEntity> _entities;
+
         public Repository()
         {
             _entities = new List<TEntity>();
         }
+
         public virtual IEnumerable<TEntity> Get(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)

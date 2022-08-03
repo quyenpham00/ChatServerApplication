@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace ChatServerApplication.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         DataStorage dataStorage;
         PasswordEncoder passwordEncoder;
@@ -22,6 +22,7 @@ namespace ChatServerApplication.Services
             dataStorage = DataStorage.GetDataStorage();
             passwordEncoder = new PasswordEncoder();
         }
+
         public bool Login(string username, string password)
         {
             string passwordHash = passwordEncoder.HashingPassword(password);
@@ -43,7 +44,7 @@ namespace ChatServerApplication.Services
             return false;
         }
 
-        public List<User> FindFriends(User user, String friendName)
+        public List<User> FindFriends(User user, string friendName)
         {
             List<User> friends = user.Friends;
             List<User> friendsMatchKeyword = new List<User>();
@@ -80,7 +81,7 @@ namespace ChatServerApplication.Services
         {
             Message message = new Message(senderID, receiverID);
             User user = dataStorage.Users.Find(x => x.Id == receiverID);
-            if (user != null)
+            if (user == null)
             {
                 Group group = dataStorage.Groups.Find(x => x.Id == receiverID);
                 if (group != null)
@@ -169,6 +170,7 @@ namespace ChatServerApplication.Services
             groupOfUser.ForEach(group => groupIdOfUser.Add(group.Id));
             return groupIdOfUser;
         }
+
         public List<Guid> GetContactOfUser(User user)
         {
             List<Guid> contacts = new List<Guid>();
@@ -176,6 +178,7 @@ namespace ChatServerApplication.Services
             messages.ForEach(message => { contacts.Add(message.SenderID); contacts.Add(message.ReceiverID); });
             return contacts.Distinct().ToList();
         }
+
         public List<Guid> GetConversations(User user)
         {
             List<Guid> groupOfUser = GetGroupsOfUser(user);
