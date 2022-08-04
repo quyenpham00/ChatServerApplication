@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ChatServerApplication.Services
 {
-    internal interface IGroupService
+    public interface IGroupService
     {
         void CreateGroup(string groupName, string groupType, User groupAdmin);
         bool JoinGroupChatByAccessCode(Group group, string accessCode, User user);

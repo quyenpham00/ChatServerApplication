@@ -165,13 +165,13 @@ namespace ChatServerApplication.Services
 
         public List<Guid> GetGroupsOfUser(User user)
         {
-            List<Group> groupOfUser = dataStorage.Groups.Get(x => x.Members.Contains(user)).ToList();
+            List<Group> groupsOfUser = dataStorage.Groups.Get(x => x.Members.Contains(user)).ToList();
             List<Guid> groupIdOfUser = new List<Guid>();
-            groupOfUser.ForEach(group => groupIdOfUser.Add(group.Id));
+            groupsOfUser.ForEach(group => groupIdOfUser.Add(group.Id));
             return groupIdOfUser;
         }
 
-        public List<Guid> GetContactOfUser(User user)
+        public List<Guid> GetContactsOfUser(User user)
         {
             List<Guid> contacts = new List<Guid>();
             List<Message> messages = dataStorage.Messages.Get(x => x.SenderID == user.Id || x.ReceiverID == user.Id).ToList();
@@ -182,7 +182,7 @@ namespace ChatServerApplication.Services
         public List<Guid> GetConversations(User user)
         {
             List<Guid> groupOfUser = GetGroupsOfUser(user);
-            List<Guid> contactOfUser = GetContactOfUser(user);
+            List<Guid> contactOfUser = GetContactsOfUser(user);
             List<Guid> conversations = new List<Guid>();
             conversations.AddRange(groupOfUser);
             conversations.AddRange(contactOfUser);
