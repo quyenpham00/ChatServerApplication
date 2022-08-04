@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChatServerApplication.Uilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,20 +17,22 @@ namespace ChatServerApplication.Models
         {
             get => (LastName + " " + FirstName);
         }
-        public string HashPassword { get; set; }
+        internal string HashPassword { private get; set; }
         public Gender Gender { get; set; }
         public DateOnly DateOfBirth { get; set; }
-        public List<User> Friends { get; set; }
-        public User(string username, string lastName, string firstName, string hashPassword, Gender gender, DateOnly dateOfBirth)
+        public List<User> Friends { get; }
+        public User(string username, string password)
         {
             Id = Guid.NewGuid();
             Username = username;
-            LastName = lastName;
-            FirstName = firstName;
-            HashPassword = hashPassword;
-            Gender = gender;
-            DateOfBirth = dateOfBirth;
+            HashPassword = HashingPassword(password);
             Friends = new List<User>();
+        }
+        private string HashingPassword(string password)
+        {
+            PasswordEncoder passwordEncoder = new PasswordEncoder();
+            passwordEncoder.HashingPassword(password);
+            return passwordEncoder.ToString();
         }
     }
 }
