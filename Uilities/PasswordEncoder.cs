@@ -10,7 +10,7 @@ namespace ChatServerApplication.Uilities
 {
     public class PasswordEncoder
     {
-        public String HashingPassword(String password)
+        public string HashingPassword(string password)
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {
@@ -23,11 +23,11 @@ namespace ChatServerApplication.Uilities
                 return passwordHash.ToString();
             }
         }
-        public bool CheckPasswordValid(String password)
+        public bool CheckPasswordValid(string password)
         {
             try
             {
-                String pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
+                string pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
                 Match match = Regex.Match(password, pattern);
                 return match.Success;
             }
