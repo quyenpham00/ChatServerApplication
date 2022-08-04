@@ -16,28 +16,22 @@ namespace ChatServerApplication.Services
     public class UserService : IUserService
     {
         DataStorage dataStorage;
-        PasswordEncoder passwordEncoder;
         public UserService()
         {
             dataStorage = DataStorage.GetDataStorage();
-            passwordEncoder = new PasswordEncoder();
         }
 
         public bool Login(string username, string password)
         {
-            string passwordHash = passwordEncoder.HashingPassword(password);
-            User user = dataStorage.Users.Find(user => user.Username.Equals(username) && user.HashPassword.Equals(passwordHash));
+            User user = dataStorage.Users.Find(user => user.Username.Equals(username) && user.checkPassword(password));
             return user != null;
         }
 
-        public bool CreateUser(string username, string lastName, string firstName, string password, Gender gender, DateOnly dateOfBirth)
+        public bool CreateUser(User newUser)
         {
-            User user = dataStorage.Users.Find(user => user.Username.Equals(username));
-            bool passwordIsValid = passwordEncoder.CheckPasswordValid(password);
-            if (user == null && passwordIsValid)
+            User user = dataStorage.Users.Find(user => user.Id == newUser.Id);
+            if (user == null )
             {
-                string passwordHash = passwordEncoder.HashingPassword(password);
-                User newUser = new User(username, lastName, firstName, passwordHash, gender, dateOfBirth);
                 dataStorage.Users.Insert(newUser);
                 return true;
             }
@@ -148,18 +142,24 @@ namespace ChatServerApplication.Services
 
         public List<Message> GetTopLatestMessages(Guid senderID, Guid receiverID, int k, int m)
         {
-            List<Message> messages = dataStorage.Messages.Get(x => x.SenderID == senderID && x.ReceiverID == receiverID).ToList();
+            List<Message> messages = dataStorage
+                .Messages
+                .Get(x => x.SenderID == senderID && x.ReceiverID == receiverID, q => q.OrderBy(s => s.Created))
+                .ToList();
             List<Message> topLatestMessages = new List<Message>();
-            int start = messages.Count() - k - m;
-            int end = messages.Count() - m;
+            int start = messages.Count() - k - m - 1;
+            int end = messages.Count() - m - 1;
             topLatestMessages = messages.GetRange(start, end);
             return topLatestMessages;
         }
 
         public List<Message> FindMessages(Guid senderID, Guid receiverID, string keyword)
         {
-            List<Message> messages = dataStorage.Messages.Get(x => x.SenderID == senderID && x.ReceiverID == receiverID).ToList();
-            List<Message> textMessages = messages.Where(x => x.Content != "" && x.Content.Contains(keyword, StringComparison.OrdinalIgnoreCase)).ToList();
+            List<Message> messages = dataStorage
+                .Messages
+                .Get(x => x.SenderID == senderID && x.ReceiverID == receiverID)
+                .ToList();
+            List<Message> textMessages = messages.Where(x => x.Content != null && x.Content.Contains(keyword, StringComparison.OrdinalIgnoreCase)).ToList();
             return textMessages;
         }
 

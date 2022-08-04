@@ -8,7 +8,7 @@ namespace ChatServerApplication.Models
 {
     public class PrivateGroup : Group
     {
-        public List<User> Admins { get; set; }
+        public List<User> Admins { get; }
         public PrivateGroup(string name, User admin) : base(name)
         {
             Admins = new List<User>();

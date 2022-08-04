@@ -22,8 +22,6 @@ namespace ChatServerApplication.Models
             Id = Guid.NewGuid();
             SenderID = senderID;
             ReceiverID = receiverID;
-            Attachments = new List<Attachment>();
-            Content = "";
             Created = DateTime.Now;
         }
 

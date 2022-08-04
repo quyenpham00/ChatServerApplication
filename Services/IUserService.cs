@@ -10,7 +10,7 @@ namespace ChatServerApplication.Services
     public interface IUserService
     {
         bool Login(string username, string password);
-        bool CreateUser(string username, string lastName, string firstName, string password, Gender gender, DateOnly dateOfBirth);
+        bool CreateUser(User newUser);
         List<User> FindFriends(User user, string friendName);
         void SendAddFriendRequest(User sender, User receiver);
         bool AcceptAddFriendRequest(User user, User friend);

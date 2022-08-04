@@ -11,20 +11,14 @@ namespace ChatServerApplication.Models
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public AttachmentType Type
-        {
-            get { return this.Type; }
-            set
-            {
-                this.Type = classifyAttachmentType(Name);
-            }
-        }
+        public AttachmentType Type { get; }
         public byte[] Content { get; set; }
         public DateTime Created { get; set; }
         public Attachment(string name, byte[] content)
         {
             Id = Guid.NewGuid();
             Name = name;
+            Type = classifyAttachmentType(name);
             Created = DateTime.Now;
             Content = content;
         }

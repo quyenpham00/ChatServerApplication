@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ChatServerApplication.Models
 {
-    public class Group
+    public abstract class Group
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public List<User> Members { get; set; }
+        public List<User> Members { get; }
         public DateTime Created { get; set; }
         public Group(string name)
         {

@@ -73,12 +73,11 @@ namespace ChatServerApplication.Services
         }
         public List<Attachment> FindAllFiles(Guid senderID, Guid receiverID)
         {
-            IEnumerable<Message> groupMessagesContainingFile = dataStorage.Messages.Get(x => x.IsRelatedToGroup(senderID, receiverID) && x.Attachments.Count != 0);
+            List<Message> groupMessagesContainingFile = dataStorage.Messages.Get(x => x.IsRelatedToGroup(senderID, receiverID) && x.Attachments != null).ToList();
+            
             List<Attachment> attachments = new List<Attachment>();
-            foreach (Message message in groupMessagesContainingFile)
-            {
-                attachments.AddRange(message.Attachments);
-            }
+            groupMessagesContainingFile.ForEach(message => attachments.AddRange(message.Attachments));
+
             return attachments;
         }
     }
