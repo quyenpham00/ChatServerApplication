@@ -23,7 +23,7 @@ namespace ChatServerApplication.Services
 
         public bool Login(string username, string password)
         {
-            User user = dataStorage.Users.Find(user => user.Username.Equals(username) && user.checkPassword(password));
+            User user = dataStorage.Users.Find(user => user.Username.Equals(username) && user.CheckPassword(password));
             return user != null;
         }
 
@@ -182,10 +182,10 @@ namespace ChatServerApplication.Services
         public List<Guid> GetConversations(User user)
         {
             List<Guid> groupOfUser = GetGroupsOfUser(user);
-            List<Guid> contactOfUser = GetContactsOfUser(user);
+            List<Guid> contactsOfUser = GetContactsOfUser(user);
             List<Guid> conversations = new List<Guid>();
             conversations.AddRange(groupOfUser);
-            conversations.AddRange(contactOfUser);
+            conversations.AddRange(contactsOfUser);
             return conversations;
         }
 

@@ -35,7 +35,7 @@ namespace ChatServerApplication.Models
             return passwordEncoder.ToString();
         }
 
-        public bool checkPassword(string password)
+        public bool CheckPassword(string password)
         {
             string passwordHash = HashingPassword(password);
             return passwordHash.Equals(HashPassword);
