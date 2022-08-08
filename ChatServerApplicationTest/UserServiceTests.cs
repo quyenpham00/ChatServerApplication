@@ -21,37 +21,39 @@ namespace ChatServerApplication.Services.Tests
     [TestClass()]
     public class UserServiceTests
     {
-        private UserService _userService;
+        private UserService userService;
+        private GroupService groupService;
 
         public UserServiceTests()
         {
-            _userService = new UserService();
+            userService = new UserService();
+            groupService = new GroupService();
         }
 
         [TestMethod()]
         public void CreateUserTest()
         {
             User user = new User("user1", "123");
-            Assert.IsTrue(_userService.CreateUser(user));
+            Assert.IsTrue(userService.CreateUser(user));
         }
 
         [TestMethod()]
         public void NotCreateUserTest()
         {
             User user = new User("user1", "123");
-            Assert.IsFalse(_userService.CreateUser(user));
+            Assert.IsFalse(userService.CreateUser(user));
         }
 
         [TestMethod()]
         public void LoginSuccessfulTest()
         {
-            Assert.IsTrue(_userService.Login("user1", "123"));
+            Assert.IsTrue(userService.Login("user1", "123"));
         }
 
         [TestMethod()]
         public void LoginUnsuccessfulTest()
         {
-            Assert.IsFalse(_userService.Login("user", "123"));
+            Assert.IsFalse(userService.Login("user", "123"));
         }
 
         [TestMethod()]
@@ -61,12 +63,12 @@ namespace ChatServerApplication.Services.Tests
             User receiver = new User("user3", "789");
             receiver.LastName = "Tester";
 
-            _userService.CreateUser(sender);
-            _userService.CreateUser(receiver);
+            userService.CreateUser(sender);
+            userService.CreateUser(receiver);
 
-            _userService.SendAddFriendRequest(sender, receiver);
-            _userService.AcceptAddFriendRequest(receiver, sender);
-            List<User> friends = _userService.FindFriends(sender, "est");
+            userService.SendAddFriendRequest(sender, receiver);
+            userService.AcceptAddFriendRequest(receiver, sender);
+            List<User> friends = userService.FindFriends(sender, "est");
 
             Assert.AreEqual(1, friends.Count);
         }
@@ -76,10 +78,10 @@ namespace ChatServerApplication.Services.Tests
         {
             User sender = new User("user122", "456");
             User receiver = new User("user223", "789");
-            _userService.CreateUser(sender);
-            _userService.CreateUser(receiver);
+            userService.CreateUser(sender);
+            userService.CreateUser(receiver);
 
-            Assert.IsTrue(_userService.SendMessage(sender.Id, receiver.Id, "Hi, I'm a tester!!"));
+            Assert.IsTrue(userService.SendMessage(sender.Id, receiver.Id, "Hi, I'm a tester!!"));
         }
 
         [TestMethod()]
@@ -87,10 +89,10 @@ namespace ChatServerApplication.Services.Tests
         {
             User sender = new User("user12", "452456");
             User receiver = new User("user23", "782879");
-            _userService.CreateUser(sender);
-            _userService.CreateUser(receiver);
+            userService.CreateUser(sender);
+            userService.CreateUser(receiver);
 
-            Assert.IsFalse(_userService.SendMessage(sender.Id, receiver.Id, ""));
+            Assert.IsFalse(userService.SendMessage(sender.Id, receiver.Id, ""));
         }
 
         [TestMethod()]
@@ -132,10 +134,10 @@ namespace ChatServerApplication.Services.Tests
 
             User sender = new User("sender123", "452456");
             User receiver = new User("receiver123", "782879");
-            _userService.CreateUser(sender);
-            _userService.CreateUser(receiver);
+            userService.CreateUser(sender);
+            userService.CreateUser(receiver);
 
-            Assert.IsTrue(_userService.SendFile(sender.Id, receiver.Id, formFiles));
+            Assert.IsTrue(userService.SendFile(sender.Id, receiver.Id, formFiles));
         }
 
         [TestMethod()]
@@ -157,27 +159,26 @@ namespace ChatServerApplication.Services.Tests
 
             User sender = new User("sender13", "452456");
             User receiver = new User("receiver13", "782879");
-            _userService.CreateUser(sender);
+            userService.CreateUser(sender);
 
-            Assert.IsFalse(_userService.SendFile(sender.Id, receiver.Id, formFiles));
+            Assert.IsFalse(userService.SendFile(sender.Id, receiver.Id, formFiles));
         }
-
 
         [TestMethod()]
         public void DeleteMessageTest()
         {
             User sender = new User("user678", "45678");
             User receiver = new User("user345", "78910");
-            _userService.CreateUser(sender);
-            _userService.CreateUser(receiver);
+            userService.CreateUser(sender);
+            userService.CreateUser(receiver);
 
-            _userService.SendMessage(sender.Id, receiver.Id, "Hi, I'm a tester!!");
-            _userService.SendMessage(sender.Id, receiver.Id, "Hi, everyone!!");
-            _userService.SendMessage(sender.Id, receiver.Id, "Yes, I'm here!!");
+            userService.SendMessage(sender.Id, receiver.Id, "Hi, I'm a tester!!");
+            userService.SendMessage(sender.Id, receiver.Id, "Hi, everyone!!");
+            userService.SendMessage(sender.Id, receiver.Id, "Yes, I'm here!!");
 
-            Message message = _userService.FindMessages(sender.Id, receiver.Id, "Hi, I'm a tester!!")[0];
-            _userService.DeleteMessage(message);
-            List<Message> messages = _userService.FindMessages(receiver.Id, sender.Id, "Hi, I'm a tester!!");
+            Message message = userService.FindMessages(sender.Id, receiver.Id, "Hi, I'm a tester!!")[0];
+            userService.DeleteMessage(message);
+            List<Message> messages = userService.FindMessages(receiver.Id, sender.Id, "Hi, I'm a tester!!");
 
             Assert.AreEqual(0, messages.Count);
         }
@@ -187,15 +188,15 @@ namespace ChatServerApplication.Services.Tests
         {
             User sender = new User("user102", "456");
             User receiver = new User("user103", "789");
-            _userService.CreateUser(sender);
-            _userService.CreateUser(receiver);
+            userService.CreateUser(sender);
+            userService.CreateUser(receiver);
 
-            _userService.SendMessage(sender.Id, receiver.Id, "Hi, I'm a tester!!");
-            _userService.SendMessage(sender.Id, receiver.Id, "Hi, everyone!!");
-            _userService.SendMessage(sender.Id, receiver.Id, "Yes, I'm here!!");
-            _userService.SendMessage(sender.Id, receiver.Id, "There is a Thai restaurant.");
-            _userService.SendMessage(sender.Id, receiver.Id, "It's nice.");
-            List<Message> messages = _userService.GetTopLatestMessages(sender.Id, receiver.Id, 3, 1);
+            userService.SendMessage(sender.Id, receiver.Id, "Hi, I'm a tester!!");
+            userService.SendMessage(sender.Id, receiver.Id, "Hi, everyone!!");
+            userService.SendMessage(sender.Id, receiver.Id, "Yes, I'm here!!");
+            userService.SendMessage(sender.Id, receiver.Id, "There is a Thai restaurant.");
+            userService.SendMessage(sender.Id, receiver.Id, "It's nice.");
+            List<Message> messages = userService.GetTopLatestMessages(sender.Id, receiver.Id, 3, 1);
 
             Assert.AreEqual(3, messages.Count);
         }
@@ -205,12 +206,12 @@ namespace ChatServerApplication.Services.Tests
         {
             User sender = new User("user202", "45645");
             User receiver = new User("user203", "78459");
-            _userService.CreateUser(sender);
-            _userService.CreateUser(receiver);
+            userService.CreateUser(sender);
+            userService.CreateUser(receiver);
 
-            _userService.SendMessage(sender.Id, receiver.Id, "Yes, I'm here!!");
-            _userService.SendMessage(sender.Id, receiver.Id, "There is a Thai restaurant.");
-            List<Message> messages = _userService.FindMessages(sender.Id, receiver.Id, "Here");
+            userService.SendMessage(sender.Id, receiver.Id, "Yes, I'm here!!");
+            userService.SendMessage(sender.Id, receiver.Id, "There is a Thai restaurant.");
+            List<Message> messages = userService.FindMessages(sender.Id, receiver.Id, "Here");
 
             Assert.AreEqual(2, messages.Count);
         }
@@ -221,8 +222,8 @@ namespace ChatServerApplication.Services.Tests
             User sender = new User("user2", "456");
             User receiver = new User("user3", "789");
 
-            _userService.SendMessage(sender.Id, receiver.Id, "");
-            List<Message> messages = _userService.FindMessages(sender.Id, receiver.Id, "Not");
+            userService.SendMessage(sender.Id, receiver.Id, "");
+            List<Message> messages = userService.FindMessages(sender.Id, receiver.Id, "Not");
 
             Assert.AreEqual(0, messages.Count);
         }
@@ -231,15 +232,15 @@ namespace ChatServerApplication.Services.Tests
         public void GetContactsOfUserTest()
         {
             User user = new User("user1232", "435456");
-            _userService.CreateUser(user);
+            userService.CreateUser(user);
             for (int i = 0; i < 3; i++)
             {
                 User friend = new User("user1354" + i, "784539" + i);
-                _userService.CreateUser(friend);
-                _userService.SendMessage(user.Id, friend.Id, "Yes, I'm here " + i);
+                userService.CreateUser(friend);
+                userService.SendMessage(user.Id, friend.Id, "Yes, I'm here " + i);
             }
 
-            Assert.AreEqual(3, _userService.GetContactsOfUser(user).Count - 1);
+            Assert.AreEqual(3, userService.GetContactsOfUser(user).Count - 1);
         }
 
         [TestMethod()]
@@ -247,7 +248,7 @@ namespace ChatServerApplication.Services.Tests
         {
             User assignor = new User("user2", "456");
             User assignee = new User("user3", "789");
-            Assert.IsTrue(_userService.SetAlias(assignor, assignee, "Test"));
+            Assert.IsTrue(userService.SetAlias(assignor, assignee, "Test"));
         }
 
         [TestMethod()]
@@ -255,7 +256,69 @@ namespace ChatServerApplication.Services.Tests
         {
             User assignor = new User("user2", "456");
             User assignee = new User("user3", "789");
-            Assert.IsFalse(_userService.SetAlias(assignor, assignee, ""));
+            Assert.IsFalse(userService.SetAlias(assignor, assignee, ""));
+        }
+
+
+        [TestMethod()]
+        public void GetGroupsOfUserTestNull()
+        {
+            User user = new User("Name", "123");
+            CollectionAssert.AllItemsAreNotNull(userService.GetGroupsOfUser(user));
+        }
+
+        [TestMethod()]
+        public void GetGroupsOfUserTestUnique()
+        {
+            User user = new User("Name", "123");
+            CollectionAssert.AllItemsAreUnique(userService.GetGroupsOfUser(user));
+        }
+
+        [TestMethod()]
+        public void LeaveGroupTestPublicTrue()
+        {
+            User member = new User("Name", "123");
+            User Admin = new User("Admin", "123");
+            PublicGroup group = new PublicGroup("Group", "123");
+            group.Members.Add(member);
+            Assert.IsTrue(userService.LeaveGroup(member, group));
+        }
+
+        [TestMethod()]
+        public void LeaveGroupTestPrivateTrue()
+        {
+            User member = new User("Name", "123");
+            User Admin = new User("Admin", "123");
+            PrivateGroup group = new PrivateGroup("Intern", Admin);
+            group.Members.Add(member);
+            Assert.IsTrue(userService.LeaveGroup(member, group));
+        }
+
+        [TestMethod()]
+        public void LeaveGroupTestPrivateIsAdminTrue()
+        {
+            User member = new User("Name", "123");
+            User Admin = new User("Admin", "123");
+            PrivateGroup group = new PrivateGroup("Intern", Admin);
+            groupService.SetAdmin(member, group);
+            Assert.IsTrue(userService.LeaveGroup(member, group));
+        }
+
+        [TestMethod()]
+        public void LeaveGroupTestPrivateFalse()
+        {
+            User member = new User("Name", "123");
+            User Admin = new User("Admin", "123");
+            PrivateGroup group = new PrivateGroup("Intern", Admin);
+            Assert.IsFalse(userService.LeaveGroup(member, group));
+        }
+
+        [TestMethod()]
+        public void LeaveGroupTestpublicFalse()
+        {
+            User member = new User("Name", "123");
+            PublicGroup group = new PublicGroup("Intern", "123");
+            Assert.IsFalse(userService.LeaveGroup(member, group));
         }
     }
 }
