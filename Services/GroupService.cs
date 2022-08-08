@@ -80,45 +80,5 @@ namespace ChatServerApplication.Services
 
             return attachments;
         }
-
-        public void setAdmin (User admin, PrivateGroup privateGroup)
-        {
-            bool isAdmin = privateGroup.Admins.Contains(admin);
-            bool isMember = privateGroup.Members.Contains(admin);
-           
-                if (!isMember)
-                {
-                    privateGroup.Members.Add(admin);
-                    privateGroup.Admins.Add(admin);
-                }
-                else if (!isAdmin)
-                {
-                    privateGroup.Admins.Add(admin);
-                }
-          
-        }
-
-        public bool setAdmin1(User admin, PrivateGroup privateGroup)
-        {
-            bool isAdmin = privateGroup.Admins.Contains(admin);
-            bool isMember = privateGroup.Members.Contains(admin);
-            if (isAdmin)
-            {
-                if (!isMember)
-                {
-                    privateGroup.Members.Add(admin);
-                    privateGroup.Admins.Add(admin);
-                }
-                else if (!isAdmin)
-                {
-                    privateGroup.Admins.Add(admin);
-                }
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
     }
 }
