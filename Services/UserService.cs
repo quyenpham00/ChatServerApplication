@@ -29,8 +29,8 @@ namespace ChatServerApplication.Services
 
         public bool CreateUser(User newUser)
         {
-            User user = dataStorage.Users.Find(user => user.Id == newUser.Id);
-            if (user == null )
+            User user = dataStorage.Users.Find(user => user.Id == newUser.Id || user.Username == newUser.Username);
+            if (user == null)
             {
                 dataStorage.Users.Insert(newUser);
                 return true;
@@ -90,11 +90,16 @@ namespace ChatServerApplication.Services
             return message;
         }
 
-        public void SendMessage(Guid senderID, Guid receiverID, string content)
+        public bool SendMessage(Guid senderID, Guid receiverID, string content)
         {
             Message message = CheckTypeOfReceiver(senderID, receiverID);
-            message.Content = content;
-            dataStorage.Messages.Insert(message);
+            if (content != "" && content != null)
+            {
+                message.Content = content;
+                dataStorage.Messages.Insert(message);
+                return true;
+            }
+            return false;
         }
 
         private void SaveFileToFolder(IFormFile file)
@@ -147,9 +152,14 @@ namespace ChatServerApplication.Services
                 .Get(x => x.SenderID == senderID && x.ReceiverID == receiverID, q => q.OrderBy(s => s.Created))
                 .ToList();
             List<Message> topLatestMessages = new List<Message>();
-            int start = messages.Count() - k - m - 1;
-            int end = messages.Count() - m - 1;
-            topLatestMessages = messages.GetRange(start, end);
+
+            int numbersOfMessages = messages.Count();
+            if (m + k <= numbersOfMessages && m >= 0 && k > 0)
+            {
+                int start = messages.Count() - k - m;
+                int end = messages.Count() - m - 1;
+                topLatestMessages = messages.GetRange(start, end);
+            }
             return topLatestMessages;
         }
 
@@ -207,10 +217,15 @@ namespace ChatServerApplication.Services
             return isGroupContainUser;
         }
 
-        public void SetAlias(User assignor, User assignee, string aliasName)
+        public bool SetAlias(User assignor, User assignee, string aliasName)
         {
             Alias alias = new Alias(aliasName, assignee, assignor);
-            dataStorage.Alias.Insert(alias);
+            if (aliasName != "" && aliasName != null)
+            {
+                dataStorage.Alias.Insert(alias);
+                return true;
+            }
+            return false;
         }
     }
 }
