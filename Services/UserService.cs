@@ -16,6 +16,7 @@ namespace ChatServerApplication.Services
     public class UserService : IUserService
     {
         DataStorage dataStorage;
+
         public UserService()
         {
             dataStorage = DataStorage.GetDataStorage();
@@ -71,73 +72,112 @@ namespace ChatServerApplication.Services
             return false;
         }
 
-        public Message CheckTypeOfReceiver(Guid senderID, Guid receiverID)
+        public Receiver GetTypeOfReceiver(Guid receiverID)
         {
-            Message message = new Message(senderID, receiverID);
             User user = dataStorage.Users.Find(x => x.Id == receiverID);
             if (user == null)
             {
                 Group group = dataStorage.Groups.Find(x => x.Id == receiverID);
                 if (group != null)
                 {
-                    message.ReceiverType = Receiver.Group;
+                    return Receiver.Group;
                 }
             }
             else
             {
-                message.ReceiverType = Receiver.User;
+                return Receiver.User;
             }
-            return message;
+            return Receiver.Undefined;
         }
 
         public bool SendMessage(Guid senderID, Guid receiverID, string content)
         {
-            Message message = CheckTypeOfReceiver(senderID, receiverID);
-            if (content != "" && content != null)
+            User sender = dataStorage.Users.Find(x => x.Id == senderID);
+            if (sender != null)
             {
-                message.Content = content;
-                dataStorage.Messages.Insert(message);
-                return true;
+                Receiver receiver = GetTypeOfReceiver(receiverID);
+                if (content != "" && content != null && receiver != Receiver.Undefined)
+                {
+                    Message message = new Message(senderID, receiverID)
+                    {
+                        ReceiverType = receiver,
+                        Content = content,
+                    };
+                    dataStorage.Messages.Insert(message);
+                    return true;
+                }
             }
+
             return false;
         }
 
-        private void SaveFileToFolder(IFormFile file)
-        {
-            var filePath = Path.GetTempFileName();
-            using (var stream = File.Create(filePath))
-            {
-                file.CopyTo(stream);
-            }
-        }
+        /*       private void SaveFileToFolder(IFormFile file)
+               {
+                   var filePath = Path.GetTempFileName();
+                   using (var stream = File.Create(filePath))
+                   {
+                       file.CopyTo(stream);
+                   }
+               }*/
 
-        private Attachment UploadFile(IFormFile file)
+        public List<Attachment> UploadFiles(List<IFormFile> files)
         {
-            using (var memoryStream = new MemoryStream())
-            {
-                file.CopyTo(memoryStream);
-                byte[] fileBytes = memoryStream.ToArray();
-                string fileName = file.FileName;
-                Attachment attachment = new Attachment(fileName, fileBytes);
-                return attachment;
-            }
-        }
+            List<Attachment> uploadedFiles = new List<Attachment>();
 
-        public void SendFile(Guid senderID, Guid receiverID, List<IFormFile> files)
-        {
-            List<Attachment> attachments = new List<Attachment>();
-            foreach (var file in files)
+            foreach (var f in files)
             {
-                if (file.Length > 0)
+                string name = f.FileName.Replace(@"\\\\", @"\\");
+
+                if (f.Length > 0)
                 {
-                    Attachment attachment = UploadFile(file);
-                    attachments.Add(attachment);
-                    SaveFileToFolder(file);
+                    var memoryStream = new MemoryStream();
+
+                    // Check file name is valid
+                    if (f.FileName.Length != 0)
+                    {
+                        try
+                        {
+                            f.CopyTo(memoryStream);
+
+                            // Upload check if the file is less than 2mb!
+                            if (memoryStream.Length < 2097152)
+                            {
+                                var file = new Attachment(Path.GetFileName(name), memoryStream.ToArray());
+                                uploadedFiles.Add(file);
+                                dataStorage.Attachments.Insert(file);
+                            }
+                        }
+                        finally
+                        {
+                            memoryStream.Close();
+                            memoryStream.Dispose();
+                        }
+                    }
                 }
             }
-            Message message = CheckTypeOfReceiver(senderID, receiverID);
-            message.Attachments = attachments;
-            dataStorage.Messages.Insert(message);
+
+            return uploadedFiles;
+        }
+
+        public bool SendFile(Guid senderID, Guid receiverID, List<IFormFile> files)
+        {
+            User user = dataStorage.Users.Find(x => x.Id == senderID);
+            if (user != null)
+            {
+                List<Attachment> attachments = UploadFiles(files);
+                Receiver receiver = GetTypeOfReceiver(receiverID);
+                if (receiver != Receiver.Undefined && attachments.Count != 0)
+                {
+                    Message message = new Message(senderID, receiverID)
+                    {
+                        ReceiverType = receiver,
+                        Attachments = attachments
+                    };
+                    dataStorage.Messages.Insert(message);
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void DeleteMessage(Message message)
