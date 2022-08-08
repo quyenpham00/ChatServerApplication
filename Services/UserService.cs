@@ -39,6 +39,13 @@ namespace ChatServerApplication.Services
             return false;
         }
 
+        /// <summary>
+        /// First, each person has a list containing their friends(List<User> Friends). When a person wants to add you, the program will 
+        /// create a friend request (SendAddFriendRequest) with the sender and the receiver, if the recipient accepts the invitation, 
+        /// then the two become friends. The recipient can accept the invitation through the friend accept function( AcceptAddFriendRequest), 
+        /// each person's friend list will add the other person to their friend list. The program will search for friends in that person's friend list.
+        /// </summary>
+        
         public List<User> FindFriends(User user, string friendName)
         {
             List<User> friends = user.Friends;

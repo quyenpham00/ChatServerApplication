@@ -9,9 +9,9 @@ namespace ChatServerApplication.Models
 {
     public class Message
     {
-        public Guid Id { get; set; }
-        public Guid SenderID { get; set; }
-        public Guid ReceiverID { get; set; }
+        public Guid Id { get; }
+        public Guid SenderID { get; }
+        public Guid ReceiverID { get; }
         public Receiver ReceiverType { get; set; }
         public List<Attachment> Attachments { get; set; }
         public string Content { get; set; }

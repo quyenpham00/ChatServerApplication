@@ -10,10 +10,11 @@ namespace ChatServerApplication.Activities
 {
     public class Request
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; }
         public User Sender { get; set; }
         public User Receiver { get; set; }
         public DateTime Created { get; set; }
+
         public Request(User sender, User receiver)
         {
             Id = Guid.NewGuid();

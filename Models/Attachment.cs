@@ -9,7 +9,7 @@ namespace ChatServerApplication.Models
 {
     public class Attachment
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; }
         public string Name { get; set; }
         public AttachmentType Type { get; }
         public byte[] Content { get; set; }

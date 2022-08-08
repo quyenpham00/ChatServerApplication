@@ -8,7 +8,7 @@ namespace ChatServerApplication.Models
 {
     public abstract class Group
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; }
         public string Name { get; set; }
         public List<User> Members { get; }
         public DateTime Created { get; set; }
