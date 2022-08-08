@@ -9,7 +9,7 @@ namespace ChatServerApplication.Models
     public class PublicGroup : Group
     {
         public string AccessCode { get; set; }
-        public PublicGroup (string name,string accessCode) : base (name)
+        public PublicGroup(string name, string accessCode) : base(name)
         {
             AccessCode = accessCode;
         }

@@ -18,12 +18,11 @@ namespace ChatServerApplication.Models
         {
             Id = Guid.NewGuid();
             Name = name;
-            Type = classifyAttachmentType(name);
+            Type = ClassifyAttachmentType(name);
             Created = DateTime.Now;
             Content = content;
         }
-
-        private AttachmentType classifyAttachmentType(string fileName)
+        private AttachmentType ClassifyAttachmentType(string fileName)
         {
             string extention = Path.GetExtension(fileName).ToLower();
             switch (extention)

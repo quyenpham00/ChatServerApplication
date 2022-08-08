@@ -21,6 +21,7 @@ namespace ChatServerApplication.Models
         public Gender Gender { get; set; }
         public DateOnly DateOfBirth { get; set; }
         public List<User> Friends { get; }
+
         public User(string username, string password)
         {
             Id = Guid.NewGuid();
@@ -28,6 +29,7 @@ namespace ChatServerApplication.Models
             HashPassword = HashingPassword(password);
             Friends = new List<User>();
         }
+
         private string HashingPassword(string password)
         {
             PasswordEncoder passwordEncoder = new PasswordEncoder();

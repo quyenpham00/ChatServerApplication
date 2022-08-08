@@ -11,7 +11,7 @@ namespace ChatServerApplication.Models
         public string AliasName { get; set; }
         public User Assignee { get; }
         public User Assignor { get; }
-        public Alias (string aliasName, User assignee, User assignor)
+        public Alias(string aliasName, User assignee, User assignor)
         {
             AliasName = aliasName;
             Assignee = assignee;

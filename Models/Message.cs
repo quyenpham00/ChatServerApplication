@@ -29,6 +29,7 @@ namespace ChatServerApplication.Models
         {
             return SenderID == senderID || ReceiverID == receiverID && ReceiverType == Receiver.Group;
         }
+
         public bool IsRelatedToUser(Guid senderID, Guid receiverID)
         {
             return SenderID == senderID || ReceiverID == receiverID && ReceiverType == Receiver.User;

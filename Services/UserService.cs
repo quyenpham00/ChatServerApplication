@@ -92,7 +92,7 @@ namespace ChatServerApplication.Services
 
         public bool SendMessage(Guid senderID, Guid receiverID, string content)
         {
-            User sender = dataStorage.Users.Find(x => x.Id == senderID);
+            User sender = dataStorage.Users.Find(user => user.Id == senderID);
             if (sender != null)
             {
                 Receiver receiver = GetTypeOfReceiver(receiverID);
@@ -111,19 +111,9 @@ namespace ChatServerApplication.Services
             return false;
         }
 
-        /*       private void SaveFileToFolder(IFormFile file)
-               {
-                   var filePath = Path.GetTempFileName();
-                   using (var stream = File.Create(filePath))
-                   {
-                       file.CopyTo(stream);
-                   }
-               }*/
-
         public List<Attachment> UploadFiles(List<IFormFile> files)
         {
             List<Attachment> uploadedFiles = new List<Attachment>();
-
             foreach (var f in files)
             {
                 string name = f.FileName.Replace(@"\\\\", @"\\");
@@ -161,8 +151,8 @@ namespace ChatServerApplication.Services
 
         public bool SendFile(Guid senderID, Guid receiverID, List<IFormFile> files)
         {
-            User user = dataStorage.Users.Find(x => x.Id == senderID);
-            if (user != null)
+            User sender = dataStorage.Users.Find(user => user.Id == senderID);
+            if (sender != null)
             {
                 List<Attachment> attachments = UploadFiles(files);
                 Receiver receiver = GetTypeOfReceiver(receiverID);
@@ -189,7 +179,7 @@ namespace ChatServerApplication.Services
         {
             List<Message> messages = dataStorage
                 .Messages
-                .Get(x => x.SenderID == senderID && x.ReceiverID == receiverID, q => q.OrderBy(s => s.Created))
+                .Get(user => user.SenderID == senderID && user.ReceiverID == receiverID, sort => sort.OrderBy(message => message.Created))
                 .ToList();
             List<Message> topLatestMessages = new List<Message>();
 

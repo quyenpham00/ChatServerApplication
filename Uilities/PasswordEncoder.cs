@@ -23,19 +23,5 @@ namespace ChatServerApplication.Uilities
                 return passwordHash.ToString();
             }
         }
-        //public bool CheckPasswordValid(string password)
-        //{
-        //    try
-        //    {
-        //        string pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
-        //        Match match = Regex.Match(password, pattern);
-        //        return match.Success;
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        Console.WriteLine(exception.Message);
-        //        return false;
-        //    }
-        //}
     }
 }

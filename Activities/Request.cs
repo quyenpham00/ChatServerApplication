@@ -14,11 +14,11 @@ namespace ChatServerApplication.Activities
         public User Sender { get; set; }
         public User Reveiver { get; set; }
         public DateTime Created { get; set; }
-        public Request(User sender, User reveiver)
+        public Request(User sender, User receiver)
         {
             Id = Guid.NewGuid();
             Sender = sender;
-            Reveiver = reveiver;
+            Reveiver = receiver;
             Created = DateTime.Now;
         }
     }

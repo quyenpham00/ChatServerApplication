@@ -17,6 +17,7 @@ namespace ChatServerApplication.Uilities
         private static long lastId = DateTime.UtcNow.Ticks;
 
         public string GetNextAccessCode() => GenerateAccessCode(Interlocked.Increment(ref lastId));
+
         private static string GenerateAccessCode(long id)
         {
             return string.Create(13, id, (buffer, value) =>
