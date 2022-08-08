@@ -12,13 +12,13 @@ namespace ChatServerApplication.Activities
     {
         public Guid Id { get; set; }
         public User Sender { get; set; }
-        public User Reveiver { get; set; }
+        public User Receiver { get; set; }
         public DateTime Created { get; set; }
         public Request(User sender, User receiver)
         {
             Id = Guid.NewGuid();
             Sender = sender;
-            Reveiver = receiver;
+            Receiver = receiver;
             Created = DateTime.Now;
         }
     }

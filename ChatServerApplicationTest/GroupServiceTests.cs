@@ -12,9 +12,13 @@ namespace ChatServerApplication.ChatServerApplicationTest
     [TestClass()]
     public class GroupServiceTests
     {
-        static GroupService groupService = new GroupService();
+        private GroupService groupService;
 
-        // Create Group Test
+        public GroupServiceTests()
+        {
+            groupService = new GroupService();
+        }
+
         [TestMethod()]
         public void CreateGroupTestFist()
         {
@@ -51,7 +55,6 @@ namespace ChatServerApplication.ChatServerApplicationTest
             }
         }
 
-        //Test Joinning Group Chat Access Code Test That Is True
         [TestMethod()]
         public void JoinGroupChatByAccessCodeTestTrue()
         {
@@ -65,7 +68,6 @@ namespace ChatServerApplication.ChatServerApplicationTest
             Assert.IsFalse(groupService.JoinGroupChatByAccessCode(groupPrivate, accessCode, groupMember));
         }
 
-        //Test Joinning Group Chat Access Code Test That Is False
         [TestMethod()]
         public void JoinGroupChatByAccessCodeTestFalse()
         {
@@ -89,12 +91,10 @@ namespace ChatServerApplication.ChatServerApplicationTest
             CollectionAssert.AllItemsAreNotNull(groupService.FindAllFiles(sender, reciver));
         }
 
-        //Inviting Member In A Group
         static User invitor = new User("Invitor", "123");
         static User member = new User("Member", "321");
         static PublicGroup groupPublic1 = new PublicGroup("groupMain", "123");
 
-        //Inviting Member In Public Group That Is True
         [TestMethod()]
         public void InviteMemberToGroupTestPublicTrue()
         {
@@ -102,7 +102,6 @@ namespace ChatServerApplication.ChatServerApplicationTest
             Assert.IsTrue(groupService.InviteMemberToGroupChat(groupPublic1, invitor, member));
         }
 
-        //Inviting Member In Public Group That Is False
         [TestMethod()]
         public void InviteMemberToGroupTestPublicFalse()
         {
@@ -111,17 +110,16 @@ namespace ChatServerApplication.ChatServerApplicationTest
 
         static PrivateGroup groupPrivate1 = new PrivateGroup("groupMain", invitor);
 
-        //Inviting Member In Private Group That Is True 
         [TestMethod()]
         public void InviteMemberToGroupTestPrivateTrue()
         {
+            groupPrivate1.Members.Add(invitor);
             Assert.IsTrue(groupService.InviteMemberToGroupChat(groupPrivate1, invitor, member));
         }
 
         static User groupPrivateAdmin = new User("Adin", "123");
         static PrivateGroup groupPrivate2 = new PrivateGroup("groupMain", groupPrivateAdmin);
 
-        //Inviting Member In Private Group That Is False
         [TestMethod()]
         public void InviteMemberToGroupTestPrivateFalse()
         {

@@ -259,7 +259,6 @@ namespace ChatServerApplication.Services.Tests
             Assert.IsFalse(userService.SetAlias(assignor, assignee, ""));
         }
 
-
         [TestMethod()]
         public void GetGroupsOfUserTestNull()
         {

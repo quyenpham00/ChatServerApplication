@@ -2,7 +2,14 @@
 using ChatServerApplication.Data;
 using ChatServerApplication.Models;
 using ChatServerApplication.Models.Enums;
+using ChatServerApplication.Reponsitories;
+using ChatServerApplication.Uilities;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ChatServerApplication.Services
 {
@@ -54,7 +61,7 @@ namespace ChatServerApplication.Services
 
         public bool AcceptAddFriendRequest(User user, User friend)
         {
-            Request friendRequest = dataStorage.Requests.Find(x => x.Sender == friend && x.Reveiver == user);
+            Request friendRequest = dataStorage.Requests.Find(x => x.Sender == friend && x.Receiver == user);
             if (friendRequest != null)
             {
                 user.Friends.Add(friend);
