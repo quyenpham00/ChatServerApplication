@@ -13,5 +13,6 @@ namespace ChatServerApplication.Services
         bool JoinGroupChatByAccessCode(Group group, string accessCode, User user);
         bool InviteMemberToGroupChat(Group group, User invitor, User member);
         List<Attachment> FindAllFiles(Guid senderID, Guid receiverID);
+        void SetAdmin(User admin, PrivateGroup privateGroup);
     }
 }
