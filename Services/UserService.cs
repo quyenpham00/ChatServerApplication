@@ -16,6 +16,7 @@ namespace ChatServerApplication.Services
     public class UserService : IUserService
     {
         DataStorage dataStorage;
+
         public UserService()
         {
             dataStorage = DataStorage.GetDataStorage();
@@ -71,7 +72,7 @@ namespace ChatServerApplication.Services
             return false;
         }
 
-        public Receiver GetTypeOfReceiver( Guid receiverID)
+        public Receiver GetTypeOfReceiver(Guid receiverID)
         {
             User user = dataStorage.Users.Find(x => x.Id == receiverID);
             if (user == null)
@@ -91,8 +92,8 @@ namespace ChatServerApplication.Services
 
         public bool SendMessage(Guid senderID, Guid receiverID, string content)
         {
-            User sender = dataStorage.Users.Find(x => x.Id == senderID); 
-            if(sender != null)
+            User sender = dataStorage.Users.Find(x => x.Id == senderID);
+            if (sender != null)
             {
                 Receiver receiver = GetTypeOfReceiver(receiverID);
                 if (content != "" && content != null && receiver != Receiver.Undefined)
@@ -106,18 +107,18 @@ namespace ChatServerApplication.Services
                     return true;
                 }
             }
-           
+
             return false;
         }
 
- /*       private void SaveFileToFolder(IFormFile file)
-        {
-            var filePath = Path.GetTempFileName();
-            using (var stream = File.Create(filePath))
-            {
-                file.CopyTo(stream);
-            }
-        }*/
+        /*       private void SaveFileToFolder(IFormFile file)
+               {
+                   var filePath = Path.GetTempFileName();
+                   using (var stream = File.Create(filePath))
+                   {
+                       file.CopyTo(stream);
+                   }
+               }*/
 
         public List<Attachment> UploadFiles(List<IFormFile> files)
         {
@@ -161,7 +162,7 @@ namespace ChatServerApplication.Services
         public bool SendFile(Guid senderID, Guid receiverID, List<IFormFile> files)
         {
             User user = dataStorage.Users.Find(x => x.Id == senderID);
-            if(user != null)
+            if (user != null)
             {
                 List<Attachment> attachments = UploadFiles(files);
                 Receiver receiver = GetTypeOfReceiver(receiverID);
