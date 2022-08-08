@@ -10,5 +10,6 @@ namespace ChatServerApplication.Models.Enums
     {
         Group,
         User,
+        Undefined
     }
 }

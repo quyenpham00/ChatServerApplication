@@ -14,11 +14,13 @@ namespace ChatServerApplication.Services
     {
         DataStorage dataStorage;
         AccessCodeGenerator accessCodeGenerator;
+
         public GroupService()
         {
             dataStorage = DataStorage.GetDataStorage();
             accessCodeGenerator = new AccessCodeGenerator();
         }
+
         public void CreateGroup(string groupName, string groupType, User groupAdmin)
         {
             Group group;
@@ -33,6 +35,7 @@ namespace ChatServerApplication.Services
             }
             dataStorage.Groups.Insert(group);
         }
+
         public bool JoinGroupChatByAccessCode(Group group, string accessCode, User user)
         {
             if (group.GetType() == typeof(PublicGroup))
@@ -46,6 +49,7 @@ namespace ChatServerApplication.Services
             }
             return false;
         }
+
         public bool InviteMemberToGroupChat(Group group, User invitor, User member)
         {
             bool isGroupsContainMember = group.Members.Contains(member);
@@ -71,31 +75,32 @@ namespace ChatServerApplication.Services
             }
             return false;
         }
+
         public List<Attachment> FindAllFiles(Guid senderID, Guid receiverID)
         {
             List<Message> groupMessagesContainingFile = dataStorage.Messages.Get(x => x.IsRelatedToGroup(senderID, receiverID) && x.Attachments != null).ToList();
-            
+
             List<Attachment> attachments = new List<Attachment>();
             groupMessagesContainingFile.ForEach(message => attachments.AddRange(message.Attachments));
 
             return attachments;
         }
 
-        public void setAdmin (User admin, PrivateGroup privateGroup)
+        public void setAdmin(User admin, PrivateGroup privateGroup)
         {
             bool isAdmin = privateGroup.Admins.Contains(admin);
             bool isMember = privateGroup.Members.Contains(admin);
-           
-                if (!isMember)
-                {
-                    privateGroup.Members.Add(admin);
-                    privateGroup.Admins.Add(admin);
-                }
-                else if (!isAdmin)
-                {
-                    privateGroup.Admins.Add(admin);
-                }
-          
+
+            if (!isMember)
+            {
+                privateGroup.Members.Add(admin);
+                privateGroup.Admins.Add(admin);
+            }
+            else if (!isAdmin)
+            {
+                privateGroup.Admins.Add(admin);
+            }
+
         }
 
         public bool setAdmin1(User admin, PrivateGroup privateGroup)
