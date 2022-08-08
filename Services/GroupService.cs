@@ -86,7 +86,7 @@ namespace ChatServerApplication.Services
             return attachments;
         }
 
-        public void setAdmin(User admin, PrivateGroup privateGroup)
+        public void SetAdmin(User admin, PrivateGroup privateGroup)
         {
             bool isAdmin = privateGroup.Admins.Contains(admin);
             bool isMember = privateGroup.Members.Contains(admin);
@@ -103,7 +103,7 @@ namespace ChatServerApplication.Services
 
         }
 
-        public bool setAdmin1(User admin, PrivateGroup privateGroup)
+        public bool SetAdmin1(User admin, PrivateGroup privateGroup)
         {
             bool isAdmin = privateGroup.Admins.Contains(admin);
             bool isMember = privateGroup.Members.Contains(admin);
